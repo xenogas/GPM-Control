@@ -1,0 +1,9 @@
+.hidden {
+    display: none;
+}
+.media-control {
+    text-decoration: underline;
+}
+#popup-content ul li {
+    list-style-type: square;
+}

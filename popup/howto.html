@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="howto.css"/>
+    </head>
+    
+    <body>
+        <div id="popup-content">
+            <p>The available commands are:
+                <ul>
+                    <li><span class="media-control">Play / Pause</span> - to start or stop the music</li>
+                    <li><span class="media-control">Next</span> - to move on to the next track</li>
+                    <li><span class="media-control">Previous</span> - to restart the current track, double click to move to the previous track</li>
+                    <li><span class="media-control">Rate</span> - to give the track a thumbs up or thumbs down</li>
+                    <li><span class="media-control">Help</span> - to bring up this window</li>
+                </ul>
+            </p>
+        </div>
+        <div id="error-content" class="hidden">
+            <p>Can't control Google Play Music from this webpage.  Make sure that you are not in a privileged page such as about::debugging or the addons.mozilla.org domain.</p>
+        </div>
+        
+        <!-- referenced JS files -->
+        <script src="howto.js"></script>
+    </body>
+</html>
