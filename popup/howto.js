@@ -1,26 +1,40 @@
-// Add click listeners
+// This tab's ID for future reference.  See about changing this for future structure
+// (can we reference a static tab when we're talking about the active tab?)
+var tabId;
+browser.tabs.query({currentWindow: true, active: true})
+.then( (tabs) => {
+    if( tabs.length > 0 ) {
+        tabId = tabs[0].id;
+    }
+});
+
+/**
+ * Add event listeners for the media control hooks
+ */
 function listenForClicks() {
     document.addEventListener("click", (e) => {
         if( e.target.classList.contains("media-control") ) {
+            var action;
             switch(e.target.textContent){
-                case "Play / Pause":
-                    return playClicked();
-                case "Next":
-                    return;
-                case "Previous":
-                    return;
-                case "Rate":
-                    return;
-                case "Help":
-                    return;
+               case "Play / Pause":
+                   action = "play-pause";
+                   break;
+               case "Next":
+                   action = "next";
+                   break;
+               case "Previous":
+                   action = "previous";
+                   break;
+               case "Rate":
+                   action = "help";
+                   break;
             }
+            browser.tabs.sendMessage(tabId, {
+                command: "gpm-control-music",
+                action: action
+            })
         }
     });
-}
-
-// process the play clicked event
-function playClicked(){
-    alert('you clicke the play button, this would have toggled the track to start or  stop it.');
 }
 
 /**
