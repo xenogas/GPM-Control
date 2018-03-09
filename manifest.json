@@ -11,13 +11,13 @@
     },
 
     "permissions": [
-        "activeTab"
+        "tabs"
     ],
 
     "browser_action": {
         "default_icon": "icons/gpmusic-32.png",
         "default_title": "Control Google Play Music",
-        "default_popup": "popup/howto.html"
+        "default_popup": "popup/controls.html"
     },
 
     "web_accessible_resources": [
