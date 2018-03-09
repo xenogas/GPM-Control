@@ -1,10 +1,11 @@
 (function(){
-    /**
-     * Check and set a global guard variable.  If this content script is injected
-     * into the same page again, it will do nothing the next time.
-     */
+    // Ensure this script only runs once
     if( window.gpmusicHasRun ) { return; }
     window.gpmusicHasRun = true;
+
+    /**************************************************************************
+     * Constant values associated with the Google Play Music web page
+     */
 
     // Google Play Actions
     var actions = {
@@ -30,13 +31,17 @@
         //queue: "#queueContainer"
     };
 
+    /**************************************************************************
+     * Methods to execute controls in the Google Play Music tab
+     */
+
     // process the play clicked event
     function playPauseTrack(){
-        alert('you clicke the play button, this would have toggled the track to start or  stop it.');
+        console.log('play-pause-track');
     }
 
-    function nextTrack(){alert('next');}
-    function previousTrack(){alert('prev');}
+    function nextTrack(){console.log('next');}
+    function previousTrack(){console.log('prev');}
 
     /**
      * Listen for messages from the background script.

@@ -10,7 +10,19 @@
         "96": "icons/gpmusic-96.png"
     },
 
+    "content_scripts": [
+        {
+            "matches": ["*://play.google.com/*"],
+            "js": ["content_scripts/gpmusic.js"]
+        }
+    ],
+
+    "background": {
+        "scripts": ["background_scripts/play-state.js"]
+    },
+
     "permissions": [
+        "activeTab",
         "tabs"
     ],
 
