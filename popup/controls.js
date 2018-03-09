@@ -19,18 +19,10 @@ function listenForClicks() {
         if( e.target.classList.contains("media-control") ) {
             var action;
             switch(e.target.textContent){
-               case "Play / Pause":
-                   action = "play-pause";
-                   break;
-               case "Next":
-                   action = "next";
-                   break;
-               case "Previous":
-                   action = "previous";
-                   break;
-               case "Rate":
-                   action = "help";
-                   break;
+               case "Play / Pause":     action = "play-pause";      break;
+               case "Next":             action = "next";            break;
+               case "Previous":         action = "previous";        break;
+               case "Rate":             action = "help";            break;
             }
             
             // Send the event to the Google Play Music's content script to execute

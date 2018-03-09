@@ -6,6 +6,8 @@
     /**************************************************************************
      * Constant values associated with the Google Play Music web page
      */
+    // Shorthand for querying DOM elements
+    var $ = document.querySelector.bind(document);
 
     // Google Play Actions
     var actions = {
@@ -38,10 +40,17 @@
     // process the play clicked event
     function playPauseTrack(){
         console.log('play-pause-track');
+        $(actions.play).click();
     }
 
-    function nextTrack(){console.log('next');}
-    function previousTrack(){console.log('prev');}
+    function nextTrack(){
+        console.log('next');
+        $(actions.forward).click();
+    }
+    function previousTrack(){
+        console.log('prev');
+        $(actions.rewind).click();
+    }
 
     /**
      * Listen for messages from the background script.
