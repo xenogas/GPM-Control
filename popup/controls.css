@@ -1,3 +1,7 @@
+@font-face {
+    font-family: "Roboto-Light";
+    src: url("/Roboto-Light.ttf") format("woff2");
+}
 .hidden {
     display: none!important;
 }
@@ -12,6 +16,9 @@ svg {
 #media-control-bar {
     display: flex;
     flex-direction: row;
+    position: absolute;
+    bottom: 3px;
+    left: 200px;
 }
 #media-control-bar .control {
     cursor: pointer;
@@ -34,3 +41,45 @@ svg {
         fill: white;
         background-color: coral;
     }
+/** Current track information **/
+#current-track-info {
+    width: 400px;
+    height: 74px;
+    overflow: hidden;
+}
+#current-track-info span {
+    font-family: 'Roboto-Light', sans-serif;
+    font-weight: 100;
+}
+#current-track-info .secondary-information {
+    font-size: 12px;
+}
+#current-artwork {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 90px;
+    height: 90px;
+}
+#current-title {
+    position: absolute;
+    top: 5px;
+    left: 95px;
+    font-size: 16px;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 310px;
+}
+#album-artist {
+    position: absolute;
+    top: 28px;
+    left: 95px;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 310px;
+}
+#current-progress {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+}

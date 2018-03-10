@@ -3,11 +3,24 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<!-- <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">  -->
 		<link rel="stylesheet" href="controls.css"/>
 	</head>
 	
 	<body>
 		<div id="popup-content">
+			<div id="current-track-info">
+				<img id="current-artwork" src="https://lh3.googleusercontent.com/GrW9xITSU2ntHHtjGvlMg0S0naY2oD8kznTgbxxsLWFi91c2xNs75Zbf1ykcX48Vpjc7PIJ0Jw">
+				<span id="current-title">Super Star Anime Cosplay Manga Party</span>
+				<div id="album-artist">
+					<span id="current-artist" class="secondary-information">WillRock</span>
+					-
+					<span id="current-album" class="secondary-information">WillRock: Journey to the Centre of the World</span>
+				</div>
+				<span id="current-progress" class="secondary-information">1:03 / 3:27</span>
+				</div>
+			</div>
+
 			<!-- Icons provided courtesy of feathericons.com.  Licensed under the MIT License -->
 			<div id="media-control-bar">
 				<div class="control" id="rewind">
@@ -16,12 +29,12 @@
 						<line x1="5" y1="19" x2="5" y2="5"></line>
 					</svg>
 				</div>
-				<div class="control circle" id="play">
+				<div class="control circle hidden" id="play">
 					<svg viewBox="0 0 24 24">
 						<polygon points="7 3 21 12 7 21 7 3"></polygon>
 					</svg>
 				</div>
-				<div class="control circle hidden" id="pause">
+				<div class="control circle" id="pause">
 					<svg viewBox="0 0 24 24">
 						<rect x="6" y="4" width="4" height="16"></rect>
 						<rect x="14" y="4" width="4" height="16"></rect>
