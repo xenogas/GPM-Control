@@ -35,10 +35,7 @@
 	 * Method to retrieve media information from Google Play Music
 	 */
 	var updateTimeoutId;
-	async function synchronizeTrackInformation() {
-		// Delay one second to allow the duration component to be updated
-		// updateTimeoutId = setTimeout(()=>{
-		// }, 1000);
+	function synchronizeTrackInformation() {
 		var track = {};
 		track.title = $(trackInformation.title).innerHTML;
 		track.artist = $(trackInformation.artist).innerHTML;
@@ -47,13 +44,40 @@
 		track.progress = $(trackInformation.progress).innerHTML;
 		track.artwork = $(trackInformation.artwork).src;
 		track.artwork = track.artwork.substring(0, track.artwork.indexOf("="));
+		// track.isPlaying = isTrackPlaying();
+		// console.log("track is playing: " + track.isPlaying);
 		
 		// Log retreived data (minus artwork src)
 		// console.log(track.title + "\t" + track.artist + "\t" + track.album + "\t" + track.progress + "/" + track.duration);
 		
 		// TODO: push this to the background script
-		browser.runtime.sendMessage({track: track});
+		browser.runtime.sendMessage({type:"updateTrack", track: track});
 	}
+	/**
+	 * Helper function to determine the current play state
+	 */
+	function isTrackPlaying() {
+		var isPlaying = false;
+
+		var audioElements = document.getElementsByTagName("audio");
+		for( var i = 0; i < audioElements.length; i++ ) {
+			if( element.paused ) {
+				isPlaying = true;
+				break;
+			}
+		}
+		
+		return isPlaying;
+	}
+	/**
+	 * Synchronize the play state with the background & popup
+	 */
+	// function syncronizePlayState() {
+	// 	console.log("checking to see if the track is playing");
+	// 	var isPlaying = isTrackPlaying();
+	// 	console.log("is track playing " + isPlaying);
+	// 	browser.runtime.sendMessage({type:"updatePlayState", isPlaying: isPlaying});
+	// }
 
 	/**************************************************************************
 	 * Methods to execute controls in the Google Play Music tab
@@ -91,6 +115,9 @@
 	synchronizeTrackInformation();
 	var songInfoObserver = new MutationObserver(synchronizeTrackInformation);
 	songInfoObserver.observe( $("#time_container_duration"), {childList:true} );
-
+	
 	//TODO: Observe for pause button click and notifiy the player that the audio is not currently playing
+	// syncronizePlayState();
+	// var playPauseObserver = new MutationObserver(syncronizePlayState);
+	// playPauseObserver.observe( $("#player-bar-play-pause"), {attributes:true} );
 })();
