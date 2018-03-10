@@ -1,9 +1,36 @@
 .hidden {
-    display: none;
+    display: none!important;
 }
-.media-control {
-    text-decoration: underline;
+svg {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    width: 16;
+    height: 16px;
 }
-#popup-content ul li {
-    list-style-type: square;
+#media-control-bar {
+    display: flex;
+    flex-direction: row;
 }
+#media-control-bar .control {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+    #media-control-bar .control.circle {
+        border-radius: 50%;
+    }
+    #play {
+        color: white;
+        fill: white;
+        background-color: coral;
+    }
+    #pause {
+        color: white;
+        fill: white;
+        background-color: coral;
+    }

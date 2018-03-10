@@ -17,3 +17,14 @@ function getGooglePlayTab() {
         }
     });
 }
+
+function sendGooglePlayAction(command) {
+    getGooglePlayTab()
+    .then( (tab) => {
+        console.log("tab: " + tab);
+        browser.tabs.sendMessage(tab.id, {
+            command: "gpm-control-music",
+            action: command
+        });
+    });
+}
