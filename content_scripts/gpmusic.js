@@ -10,7 +10,7 @@
 	var $ = document.querySelector.bind(document);
 
 	// Google Play Actions
-	var actions = {
+	const actions = {
 		play: "#player-bar-play-pause",
 		forward: "#player-bar-forward",
 		rewind: "#player-bar-rewind",
@@ -35,7 +35,10 @@
 	 * Method to retrieve media information from Google Play Music
 	 */
 	var updateTimeoutId;
-	function synchronizeTrackInformation() {
+	async function synchronizeTrackInformation() {
+		// Delay one second to allow the duration component to be updated
+		// updateTimeoutId = setTimeout(()=>{
+		// }, 1000);
 		var track = {};
 		track.title = $(trackInformation.title).innerHTML;
 		track.artist = $(trackInformation.artist).innerHTML;
@@ -46,9 +49,10 @@
 		track.artwork = track.artwork.substring(0, track.artwork.indexOf("="));
 		
 		// Log retreived data (minus artwork src)
-		console.log(track.title + "\t" + track.artist + "\t" + track.album + "\t" + track.progress + "/" + track.duration);
+		// console.log(track.title + "\t" + track.artist + "\t" + track.album + "\t" + track.progress + "/" + track.duration);
 		
 		// TODO: push this to the background script
+		browser.runtime.sendMessage({track: track});
 	}
 
 	/**************************************************************************
@@ -80,9 +84,13 @@
 		}
 		else { alert('received some other message'); }
 	});
+
 	// Synchronize the current track information and setup an observer to 
-	// listen for any changes and resynchronize
+	// listen for any changes and resynchronize.
+	// The duration element updates every second
 	synchronizeTrackInformation();
 	var songInfoObserver = new MutationObserver(synchronizeTrackInformation);
-	songInfoObserver.observe( $("#playerSongInfo"), {childList:true} );
+	songInfoObserver.observe( $("#time_container_duration"), {childList:true} );
+
+	//TODO: Observe for pause button click and notifiy the player that the audio is not currently playing
 })();
