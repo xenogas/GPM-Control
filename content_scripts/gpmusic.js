@@ -61,9 +61,8 @@
 
 		var audioElements = document.getElementsByTagName("audio");
 		for( var i = 0; i < audioElements.length; i++ ) {
-			if( element.paused ) {
+			if( !audioElements[i].paused ) {
 				isPlaying = true;
-				break;
 			}
 		}
 		
