@@ -24,7 +24,7 @@
 		title: "#currently-playing-title",
 		artwork: "#playerBarArt", // Possibly adjust this so that we get a larger piece of art
 		artist: "#player-artist",
-		album: "#player-album",
+		album: ".player-album",
 		duration: "#time_container_duration",
 		progress: "#time_container_current"
 	}
@@ -34,15 +34,19 @@
 	/**************************************************************************
 	 * Method to retrieve media information from Google Play Music
 	 */
+	var updateTimeoutId;
 	function synchronizeTrackInformation() {
-		var track = {
-			title: $(trackInformation.title).innerHTML,
-			artist: $(trackInformation.artist).innerHTML,
-			album: $(trackInformation.album).innerHTML,
-			artwork: $(trackInformation.artwork).innerHTML,
-			duration: $(trackInformation.duration).innerHTML,
-			progress: $(trackInformation.progress).innerHTML
-		};
+		var track = {};
+		track.title = $(trackInformation.title).innerHTML;
+		track.artist = $(trackInformation.artist).innerHTML;
+		track.album = $(trackInformation.album).innerHTML;
+		track.duration = $(trackInformation.duration).innerHTML;
+		track.progress = $(trackInformation.progress).innerHTML;
+		track.artwork = $(trackInformation.artwork).src;
+		track.artwork = track.artwork.substring(0, track.artwork.indexOf("="));
+		
+		// Log retreived data (minus artwork src)
+		console.log(track.title + "\t" + track.artist + "\t" + track.album + "\t" + track.progress + "/" + track.duration);
 		
 		// TODO: push this to the background script
 	}
@@ -76,6 +80,9 @@
 		}
 		else { alert('received some other message'); }
 	});
-	// listen for DOM changes
-	setInterval( synchronizeTrackInformation, 1000);
+	// Synchronize the current track information and setup an observer to 
+	// listen for any changes and resynchronize
+	synchronizeTrackInformation();
+	var songInfoObserver = new MutationObserver(synchronizeTrackInformation);
+	songInfoObserver.observe( $("#playerSongInfo"), {childList:true} );
 })();
