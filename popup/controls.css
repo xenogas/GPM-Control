@@ -5,6 +5,11 @@
 .hidden {
     display: none!important;
 }
+body{
+    width: 400px;
+    height: 74px;
+}
+/** control bar **/
 svg {
     stroke: currentColor;
     stroke-width: 2;
@@ -43,8 +48,6 @@ svg {
     }
 /** Current track information **/
 #current-track-info {
-    width: 400px;
-    height: 74px;
     overflow: hidden;
 }
 #current-track-info span {
