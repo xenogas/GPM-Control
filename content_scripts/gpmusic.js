@@ -3,9 +3,6 @@
 	if( window.gpmusicHasRun ) { return; }
 	window.gpmusicHasRun = true;
 
-	/**************************************************************************
-	 * Constant values associated with the Google Play Music web page
-	 */
 	// Shorthand for querying DOM elements
 	var $ = document.querySelector.bind(document);
 
@@ -31,10 +28,10 @@
 	//TODO: address the queue container
 	//queue: "#queueContainer"
 
-	/**************************************************************************
-	 * Method to retrieve media information from Google Play Music
+	/**
+	 * Synchronize current track information to the background script for refernece
+	 * in the plugin popup.
 	 */
-	var updateTimeoutId;
 	function synchronizeTrackInformation() {
 		var track = {};
 		track.title = $(trackInformation.title).innerHTML;
@@ -44,15 +41,15 @@
 		track.progress = $(trackInformation.progress).innerHTML;
 		track.artwork = $(trackInformation.artwork).src;
 		track.artwork = track.artwork.substring(0, track.artwork.indexOf("="));
-		// track.isPlaying = isTrackPlaying();
-		// console.log("track is playing: " + track.isPlaying);
+		track.isPlaying = isTrackPlaying();
 		
 		// Log retreived data (minus artwork src)
 		// console.log(track.title + "\t" + track.artist + "\t" + track.album + "\t" + track.progress + "/" + track.duration);
 		
 		// TODO: push this to the background script
-		browser.runtime.sendMessage({type:"updateTrack", track: track});
+		browser.runtime.sendMessage({type: "updateTrack", track: track});
 	}
+
 	/**
 	 * Helper function to determine the current play state
 	 */
@@ -68,30 +65,40 @@
 		
 		return isPlaying;
 	}
+	
 	/**
 	 * Synchronize the play state with the background & popup
 	 */
 	// function syncronizePlayState() {
-	// 	console.log("checking to see if the track is playing");
 	// 	var isPlaying = isTrackPlaying();
-	// 	console.log("is track playing " + isPlaying);
-	// 	browser.runtime.sendMessage({type:"updatePlayState", isPlaying: isPlaying});
+	// 	browser.runtime.sendMessage({type: "updatePlayState", isPlaying: isPlaying});
 	// }
 
-	/**************************************************************************
-	 * Methods to execute controls in the Google Play Music tab
+	/**
+	 * Forward a click event to Google Play Music's play-pause button.
 	 */
-
-	// process the play clicked event
 	function playPauseTrack(){
 		$(actions.play).click();
 	}
+
+	/**
+	 * Forward a click event to Google Play Music's next track (forward) button.
+	 */
 	function nextTrack(){
 		$(actions.forward).click();
+		// focus on the duration to force update it
+		$(trackInformation.duration).focus();
 	}
+
+	/**
+	 * Forward a click event to Google Play Music's rewind button.
+	 */
 	function rewindTrack(){
 		$(actions.rewind).click();
+		// focus on the duration to force update it
+		$(trackInformation.duration).focus();
 	}
+
 	// TODO: look into adding seek control, this would apply both here and on the controls html
 
 	/**
@@ -100,9 +107,10 @@
 	browser.runtime.onMessage.addListener( (message) => {
 		if( message.command === "gpm-control-music" ) {
 			switch( message.action ) {
-				case "play-pause":		playPauseTrack();		break;
-				case "next":			nextTrack();			break;
-				case "rewind":			rewindTrack();			break;
+				case "play-pause":		playPauseTrack();				break;
+				case "next":			nextTrack();					break;
+				case "rewind":			rewindTrack();					break;
+				case "update":			synchronizeTrackInformation();	break;
 			}
 		}
 		else { alert('received some other message'); }
@@ -113,7 +121,7 @@
 	// The duration element updates every second
 	synchronizeTrackInformation();
 	var songInfoObserver = new MutationObserver(synchronizeTrackInformation);
-	songInfoObserver.observe( $("#time_container_duration"), {childList:true} );
+	songInfoObserver.observe( $("#time_container_current"), {childList:true} );
 	
 	//TODO: Observe for pause button click and notifiy the player that the audio is not currently playing
 	// syncronizePlayState();

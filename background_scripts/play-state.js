@@ -10,8 +10,10 @@ var currentTrack = {
 	artwork:	"/img/album-ph.png",
 	progress:	"x:xx",
 	duration:	"x:xx",
-	isPlaying:	false
+	isPlaying:	false,
+	isTemplate: true
 };
+var isPopupInitialized = false;
 
 /**
  * Returns a thenable who's value is the currently active Google PLay Music's
@@ -38,6 +40,9 @@ function sendGooglePlayAction(command) {
 
 function updateTrackInformation(track) {
 	currentTrack = track;
+	if( port && isPopupInitialized ) 
+		// browser.runtime.sendMessage({type:"contentUpdated"});
+		port.postMessage({type:"contentUpdated"});
 }
 function updatePlayState(isPlaying) {
 	console.log("test");
@@ -52,3 +57,22 @@ function receiveMessage(message) {
 	}
 }
 browser.runtime.onMessage.addListener(receiveMessage);
+
+var port;
+function connect(p) {
+	console.log(p.name);
+	port = p;
+	// port.postMessage({greeting:"hi from background"});
+	port.onMessage.addListener( (m) => {
+		isPopupInitialized = true;
+		// console.log("in background connect message listener");
+		// console.log(m.greeting);
+	});
+	port.onDisconnect.addListener( (port) => {
+		if( port.error ) {
+			console.log(`disconnected due to error: ${port.error.message}`);
+		}
+		isPopupInitialized = false;
+	})
+}
+browser.runtime.onConnect.addListener(connect);
