@@ -29,27 +29,41 @@ const controlAction = {
 	next:   		"next",
 	rewind: 		"rewind"
 }
+const popupComponent = {
+	loading: "#loading",
+	error: "#error-content",
+	popup: "#popup-content"
+}
+// Various types of messages which the popup sends to the background script
+const messageType = {
+	action:			"action",
+	request:		"request"
+}
 
 /**
  * Add event listeners for the media control hooks
  */
 function listenForClicks() {
 	$(uiHandle.control.play).addEventListener("click", (e) => {
-		playState.sendGooglePlayAction(controlAction.play);
+		myPort.postMessage({type: messageType.action, action: controlAction.play});
 		startedResumedPlayback();
 	});
 	$(uiHandle.control.pause).addEventListener("click", (e) => {
-		playState.sendGooglePlayAction(controlAction.pause);
+		myPort.postMessage({type: messageType.action, action: controlAction.pause});
 		pausedPlayback();
 	});
 	$(uiHandle.control.next).addEventListener("click", (e) => {
-		playState.sendGooglePlayAction(controlAction.next);
+		myPort.postMessage({type: messageType.action, action: controlAction.next});
 	});
 	$(uiHandle.control.rewind).addEventListener("click", (e) => {
-		playState.sendGooglePlayAction(controlAction.rewind);
+		myPort.postMessage({type: messageType.action, action: controlAction.rewind});
 	});
 }
 
+/**
+ * Synchronize the playback controls in a playing state and restart the
+ * progress update's update loop.
+ */
 function startedResumedPlayback() {
 	// Toggle Play/Pause display now that we've started playback
 	$(uiHandle.control.play).classList.add("hidden");
@@ -59,6 +73,11 @@ function startedResumedPlayback() {
 	updateProgress();
 	isPaused = false;
 }
+
+/**
+ * Synchronize the playback controls in a paused state and disable the 
+ * progress update's update loop.
+ */
 function pausedPlayback() {
 	// Toggle Play/Pause display now that we've stopped playback
 	$(uiHandle.control.pause).classList.add("hidden");
@@ -84,46 +103,6 @@ function updateCurrentTrack() {
 /**
  * Update's the currently playing track's progress.
  */
-// Last time the progress was changed by the content_script
-var lastProgress;
-// Current progress time
-var progressTime;
-function updateProgress2() {
-	// var progress = track.progress + " / " + track.duration;
-	// Get the current progress and durration 
-	var track = playState.currentTrack;
-	var progress = track.progress;
-
-	// Check to see if the progress has updated.  Content scripts don't
-	//  execute as often when not in the foreground
-	// If the time is not updated, calculate based on the last known time
-	if( lastProgress === progress ) {
-		// Split the progress time into minues and seconds
-		var time = progressTime.split(":");
-		// Increment the seconds
-		time[1]++;
-		// if this exceeds a minute, increment minutes and reset seconds
-		if( time[1] >= 60 ) {
-			time[0]++;
-			time[1] = 0;
-		}
-
-		// Make sure the seconds are two didgets
-		time[1] = time[1].toLocaleString('en-us', {minimumIntegerDigits:2, useGrouping:false});
-
-		progressTime = time.join(":");
-		progress = progressTime;
-	}else{
-		lastProgress = progress;
-		progressTime = progress;
-	}
-
-	// Update the UI with the current progress
-	$(uiHandle.track.progress).innerHTML = progress + " / " + track.duration;
-
-	// wait for another second and then update again
-	progressUpdateId = setTimeout(updateProgress, 1000);
-}
 function updateProgress() {
 	var track = playState.currentTrack;
 	var progress = track.progress + " / " + track.duration;
@@ -136,8 +115,9 @@ function updateProgress() {
  * Display the popup's error message, and hide the normal UI.
  */
 function reportExecuteScriptError(error) {
-	document.querySelector("#popup-content").classList.add('hidden');
-	document.querySelector("#error-content").classList.remove('hidden');
+	$(popupComponent.loading).classList.add("hidden");
+	$(popupComponent.popup).classList.add("hidden");
+	$(popupComponent.error).classList.remove("hidden");
 	console.error('Failed to execute a Google Play Music hook content script: ${error.message}');
 }
 
@@ -150,20 +130,20 @@ function reportExecuteScriptError(error) {
  */
 function initializeContent() {
 	var track = playState.currentTrack;
-	if( track || track.isTemplate ) {
+	if( track && track.isTemplate ) {
 		pausedPlayback();
-		playState.sendGooglePlayAction("update");
+		myPort.postMessage({type: messageType.request, request: "update"});
 	}
-	// does this ever fire?
+	// track information already initialized, go ahead and update
 	else{
-		updateCurrentTrack();
-		updateProgress();
+		updateContent();
 	}
 }
 
-// return a thennable so we can delay showing the content until we confirm we have content?
+/**
+ * Update the popup's control's play state to match that of Google Play Music.
+ */
 function updatePlayState() {
-	console.log("updating play state");
 	var isNowPlaying = playState.currentTrack.isPlaying;
 
 	if( isNowPlaying && isPaused) {
@@ -171,6 +151,16 @@ function updatePlayState() {
 	}else if( !isNowPlaying && !isPaused ) {
 		pausedPlayback();
 	}
+}
+
+/**
+ * Update the popup's current track content and progress
+ */
+function updateContent() {
+	// Update track information
+	updateCurrentTrack();
+	// Update current progress
+	updateProgress();
 }
 
 // Setup and initialize the connection by sending an empty message
@@ -181,8 +171,8 @@ myPort.postMessage({});
 // Add handlers for messages provided from the background script
 myPort.onMessage.addListener( (message) => {
 	switch(message.type){
-		case "contentUpdated":		updateCurrentTrack(); updateProgress();			break;
-		case "updatePlayState":		updatePlayState();								break;
+		case "contentUpdated":		updateContent();				break;
+		case "updatePlayState":		updatePlayState();				break;
 	}
 });
 

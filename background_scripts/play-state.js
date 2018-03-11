@@ -1,8 +1,12 @@
 // manage the play state and tab id
 
-const GOOGLE_PLAY_MUSIC_URL = "*://play.google.com/*";
 // The ID for the currently active, or last active, Google Play Music tab
 var gpmTabId;
+const GOOGLE_PLAY_MUSIC_URL = "*://play.google.com/*";
+
+// Current port that the open popup is using to communicate with the backround script
+var popupPort;
+
 var currentTrack = {
 	title:	"Title",
 	artist:	"Artist",
@@ -13,7 +17,7 @@ var currentTrack = {
 	isPlaying:	false,
 	isTemplate: true
 };
-var isPopupInitialized = false;
+
 
 /**
  * Returns a thenable who's value is the currently active Google PLay Music's
@@ -40,9 +44,8 @@ function sendGooglePlayAction(command) {
 
 function updateTrackInformation(track) {
 	currentTrack = track;
-	if( port && isPopupInitialized ) 
-		// browser.runtime.sendMessage({type:"contentUpdated"});
-		port.postMessage({type:"contentUpdated"});
+	if( popupPort ) 
+		popupPort.postMessage({type:"contentUpdated"});
 }
 function updatePlayState(isPlaying) {
 	console.log("test");
@@ -58,21 +61,27 @@ function receiveMessage(message) {
 }
 browser.runtime.onMessage.addListener(receiveMessage);
 
-var port;
-function connect(p) {
-	console.log(p.name);
-	port = p;
-	// port.postMessage({greeting:"hi from background"});
-	port.onMessage.addListener( (m) => {
-		isPopupInitialized = true;
-		// console.log("in background connect message listener");
-		// console.log(m.greeting);
+
+
+/**
+ * Listen for connection attempts and setup communication structure for passing messages
+ * back and forth.  Setup a disconnect so we know when to stop sending messages to that
+ * endpoint.
+ * @param {Port} port 
+ */
+function connect(port) {
+	console.log("connecting to: " + port.name);
+	popupPort = port;
+	popupPort.onMessage.addListener( (message) => {
+		switch(message.type) {
+			case "action":			sendGooglePlayAction(message.action);			break;
+			case "request":			sendGooglePlayAction(message.request);			break;
+		}
 	});
-	port.onDisconnect.addListener( (port) => {
+	popupPort.onDisconnect.addListener( (port) => {
 		if( port.error ) {
 			console.log(`disconnected due to error: ${port.error.message}`);
 		}
-		isPopupInitialized = false;
 	})
 }
 browser.runtime.onConnect.addListener(connect);
