@@ -25,15 +25,44 @@
 		duration: "#time_container_duration",
 		progress: "#time_container_current"
 	}
+	// The track as of the last update cycle
+	var lastTrack;
 	//TODO: address the queue container
 	//queue: "#queueContainer"
 
 	/**
-	 * Synchronize current track information to the background script for refernece
-	 * in the plugin popup.
+	 * Update the background script with the current track inforamtion if explicitly
+	 * requested or if any of the track information, including play state, has changed.
+	 * 
+	 * @param {Boolean} isUpdateRequested True if an update was explicitly requested
 	 */
-	function synchronizeTrackInformation() {
+	function updateTrackData(isUpdateRequested) {
+		// Retrieve the current track information from the DOM
+		var track = getTrackData();
+		
+		// Determine if the track information has changed since last cycle
+		var hasTrackChanged = !areTracksEqual(track, lastTrack);
+
+		// Push update if requested or track information has changed
+		if( (isUpdateRequested === true) || hasTrackChanged ) {
+			var d = new Date();
+			var time = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+			console.log(`${time} - Updating track data\nrequested: ${isUpdateRequested}\t\tchanged:${hasTrackChanged}`);
+			// Notify changes
+			if ( myPort ) {
+				myPort.postMessage({type: "updateTrack", track: track});
+			}
+		}
+		// Update the last track for next cycle's comparison
+		lastTrack = track;
+	}
+
+	/**
+	 * Retrieve current track informaiton, including it's play state, from the DOM.
+	 */
+	function getTrackData(){
 		var track = {};
+		track.updateTime = new Date();
 		track.title = $(trackInformation.title).innerHTML;
 		track.artist = $(trackInformation.artist).innerHTML;
 		track.album = $(trackInformation.album).innerHTML;
@@ -42,12 +71,26 @@
 		track.artwork = $(trackInformation.artwork).src;
 		track.artwork = track.artwork.substring(0, track.artwork.indexOf("="));
 		track.isPlaying = isTrackPlaying();
-		
-		// Log retreived data (minus artwork src)
-		// console.log(track.title + "\t" + track.artist + "\t" + track.album + "\t" + track.progress + "/" + track.duration);
-		
-		// TODO: push this to the background script
-		browser.runtime.sendMessage({type: "updateTrack", track: track});
+		return track;
+	}
+
+	/**
+	 * Compare two track objects against eachother to see there are any significant
+	 * differences.  They will be compared in: Title, Artist, Album, and Play State.
+	 * 
+	 * @param {Object} track1 the first track object to compare
+	 * @param {Object} track2 the second track object to compare
+	 * 
+	 * @returns {Boolean} true if the tracks are equal in all significant aspects.
+	 */
+	function areTracksEqual(track1, track2) {
+		return ( 
+			(track1 != null && track2 != null)
+			&& (track1.title === track2.title)
+			&& (track1.artist === track2.artist)
+			&& (track1.album === track2.album)
+			&& (track1.isPlaying === track2.isPlaying)
+		);
 	}
 
 	/**
@@ -65,14 +108,6 @@
 		
 		return isPlaying;
 	}
-	
-	/**
-	 * Synchronize the play state with the background & popup
-	 */
-	// function syncronizePlayState() {
-	// 	var isPlaying = isTrackPlaying();
-	// 	browser.runtime.sendMessage({type: "updatePlayState", isPlaying: isPlaying});
-	// }
 
 	/**
 	 * Forward a click event to Google Play Music's play-pause button.
@@ -101,30 +136,38 @@
 
 	// TODO: look into adding seek control, this would apply both here and on the controls html
 
-	/**
-	 * Listen for messages from the background script.
-	 */
-	browser.runtime.onMessage.addListener( (message) => {
-		if( message.command === "gpm-control-music" ) {
+	console.clear();
+
+	// RACE CONDITION WAS CAUSING THIS TO NOT FIRE, PROBABLY BECAUSE THE BACKGROUND SCRIPT
+	// WASN'T YET LOADED.  REFACTOR AND SEE IF THIS METHOD OF COMMUNICATION IS ALLOWED FROM
+	// A BACKGROUND TASK.  ALSO CONSIDER REFACTORING THIS IN GENERAL TO MAKE IT EASIER FOR
+	// THE BACKGROUND SCRIPT TO HANDLE INSTANCES WHERE THERE ARE MULITIPLE GOOGLE PLAY MUSIC
+	// WINDOWS OPEN AND TO KNOW WHICN ONE IS ACTIVELY PLAYING MUSIC.
+	var myPort;
+	function setupBackgroundConnection(){
+		myPort = browser.runtime.connect({name: "gpmusic"});
+		myPort.onMessage.addListener( (message) => {
+			console.log("message received: " + message.action);
 			switch( message.action ) {
+				case "update":			updateTrackData(true);			break;
 				case "play-pause":		playPauseTrack();				break;
 				case "next":			nextTrack();					break;
 				case "rewind":			rewindTrack();					break;
-				case "update":			synchronizeTrackInformation();	break;
+				default:
+					console.log(`unknown message received: ${message}`);
 			}
-		}
-		else { alert('received some other message'); }
-	});
-
+		});
+		myPort.onDisconnect.addListener( (e) =>{
+			console.log("disconnected myPort");
+		})
+	}
+	//TODO: setup a callback loop where this will keep executing until we get a response from the background script
+	setTimeout(setupBackgroundConnection,1000);
+	
 	// Synchronize the current track information and setup an observer to 
 	// listen for any changes and resynchronize.
 	// The duration element updates every second
-	synchronizeTrackInformation();
-	var songInfoObserver = new MutationObserver(synchronizeTrackInformation);
+	updateTrackData(false);
+	var songInfoObserver = new MutationObserver(updateTrackData);
 	songInfoObserver.observe( $("#time_container_current"), {childList:true} );
-	
-	//TODO: Observe for pause button click and notifiy the player that the audio is not currently playing
-	// syncronizePlayState();
-	// var playPauseObserver = new MutationObserver(syncronizePlayState);
-	// playPauseObserver.observe( $("#player-bar-play-pause"), {attributes:true} );
 })();
