@@ -65,13 +65,14 @@ function listenForClicks() {
  * progress update's update loop.
  */
 function startedResumedPlayback() {
+	isPaused = false;
+
 	// Toggle Play/Pause display now that we've started playback
 	$(uiHandle.control.play).classList.add("hidden");
 	$(uiHandle.control.pause).classList.remove("hidden");
 	
 	// Restart the progress update loop
 	updateProgress();
-	isPaused = false;
 }
 
 /**
@@ -79,13 +80,14 @@ function startedResumedPlayback() {
  * progress update's update loop.
  */
 function pausedPlayback() {
+	isPaused = true;
+
 	// Toggle Play/Pause display now that we've stopped playback
 	$(uiHandle.control.pause).classList.add("hidden");
 	$(uiHandle.control.play).classList.remove("hidden");
 
 	// Stop the progress update loop
 	clearTimeout(progressUpdateId);
-	isPaused = true;
 }
 
 /**
@@ -98,15 +100,46 @@ function updateCurrentTrack() {
 	$(uiHandle.track.album).innerHTML = track.album;
 	$(uiHandle.track.artist).innerHTML = track.artist;
 	$(uiHandle.track.art).src = track.artwork;
+	// console.log(`new progress: ${track.progress}\nUpdate time: ${track.updateTime}`);
 }
 
 /**
  * Update's the currently playing track's progress.
  */
 function updateProgress() {
+	// If the track is paused, do not update the UI
+	if( isPaused ) return;
+
+	// Get the starting progress (that of the track when it was last updated)
 	var track = playState.currentTrack;
-	var progress = track.progress + " / " + track.duration;
+	var startProgress = track.progress.split(":");
+
+	// If the song is less than a minute, add the minutes spot to the beginning of the array
+	if( startProgress.length == 1 ) startProgress.unshift("0");
+
+	// Get the last update time, current time, and calculate the differnce
+	var currentTime = new Date();
+	var difference = new Date(currentTime - track.updateTime);
+	
+	// Add the starting progress with the time difference, spliting the parts as necessary
+	var minutes = difference.getMinutes();
+	difference.setMinutes(parseInt(startProgress[0]) + minutes);
+	var seconds = difference.getSeconds();
+	difference.setSeconds(parseInt(startProgress[1]) + seconds);
+	// Get the current progress in minutes and seconds
+	minutes = difference.getMinutes();
+	seconds = difference.getSeconds();
+
+	// Recombine, making sure to display seconds with a leading zero if necessary
+	seconds = `${seconds}`.padStart(2,"0");
+	var progress = `${minutes}:${seconds}`;
+
+	// Update the UI with the current progress
+	progress = `${progress} / ${track.duration}`;
 	$(uiHandle.track.progress).innerHTML = progress;
+
+	// Set a timeout to update progress again in a second
+	if( progressUpdateId ) clearTimeout(progressUpdateId);
 	progressUpdateId = setTimeout(updateProgress, 1000);
 }
 
@@ -131,7 +164,6 @@ function reportExecuteScriptError(error) {
 function initializeContent() {
 	var track = playState.currentTrack;
 	if( track && track.isTemplate ) {
-		pausedPlayback();
 		myPort.postMessage({type: messageType.request, request: "update"});
 	}
 	// track information already initialized, go ahead and update
@@ -157,8 +189,13 @@ function updatePlayState() {
  * Update the popup's current track content and progress
  */
 function updateContent() {
+	// var d = new Date();
+	// var time = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+	// console.log(`updating track content @${time}`);
+
 	// Update track information
 	updateCurrentTrack();
+
 	// Update current progress
 	updateProgress();
 }
