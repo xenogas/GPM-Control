@@ -10,17 +10,9 @@ var ports = {};
 var popupPortId, gpmPortId;
 
 // Template for the current track information
-var currentTrack = {
-	updateTime:		new Date(),
-	title:			"Title",
-	artist:			"Artist",
-	album:			"Album",
-	artwork:		"/img/album-ph.png",
-	progress:		"x:xx",
-	duration:		"x:xx",
-	isPlaying:		false,
-	isTemplate: 	true
-};
+var currentTrack = new Track('title', 'artist', 'album', '/img/album-ph.png', 'x:xx', 'x:xx');
+currentTrack.isPlaying = false;
+currentTrack.isTemplate = true;
 
 /**
  * Forward messages from the popup script to the currently active Google PLay Music (GPM) tab.

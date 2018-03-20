@@ -41,7 +41,7 @@
 		var track = getTrackData();
 		
 		// Determine if the track information has changed since last cycle
-		var hasTrackChanged = !areTracksEqual(track, lastTrack);
+		var hasTrackChanged = !track.equals(lastTrack);
 
 		// Push update if requested or track information has changed
 		if( (isUpdateRequested === true) || hasTrackChanged ) {
@@ -60,37 +60,21 @@
 	/**
 	 * Retrieve current track informaiton, including it's play state, from the DOM.
 	 */
-	function getTrackData(){
-		var track = {};
-		track.updateTime = new Date();
-		track.title = $(trackInformation.title).innerHTML;
-		track.artist = $(trackInformation.artist).innerHTML;
-		track.album = $(trackInformation.album).innerHTML;
-		track.duration = $(trackInformation.duration).innerHTML;
-		track.progress = $(trackInformation.progress).innerHTML;
-		track.artwork = $(trackInformation.artwork).src;
-		track.artwork = track.artwork.substring(0, track.artwork.indexOf("="));
-		track.isPlaying = isTrackPlaying();
-		return track;
-	}
+	function getTrackData() {
+		var title = $(Track.TitleId).innerHTML;
+		var artist = $(Track.ArtistId).innerHTML;
+		var album = $(Track.AlbumId).innerHTML;
+		var art = $(Track.ArtworkId).src;
+		art = art.substring(0, art.indexOf("="));
+		var progress = $(Track.ProgressId).innerHTML;
+		var duration = $(Track.DurationId).innerHTML;
 
-	/**
-	 * Compare two track objects against eachother to see there are any significant
-	 * differences.  They will be compared in: Title, Artist, Album, and Play State.
-	 * 
-	 * @param {Object} track1 the first track object to compare
-	 * @param {Object} track2 the second track object to compare
-	 * 
-	 * @returns {Boolean} true if the tracks are equal in all significant aspects.
-	 */
-	function areTracksEqual(track1, track2) {
-		return ( 
-			(track1 != null && track2 != null)
-			&& (track1.title === track2.title)
-			&& (track1.artist === track2.artist)
-			&& (track1.album === track2.album)
-			&& (track1.isPlaying === track2.isPlaying)
-		);
+		var track = new Track(title, artist, album, art, progress, duration);
+		//todo - move this away from the track and into some other setting
+		// track.isPlaying = controls.isPlaying();
+		track.isPlaying = isTrackPlaying();
+		
+		return track;
 	}
 
 	/**
