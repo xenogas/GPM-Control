@@ -6,27 +6,12 @@
 	// Shorthand for querying DOM elements
 	var $ = document.querySelector.bind(document);
 
-	// Google Play Actions
-	const actions = {
-		play: "#player-bar-play-pause",
-		forward: "#player-bar-forward",
-		rewind: "#player-bar-rewind",
-		lucky: "#iflFab",
-		luckyRefresh: "[data id-'refresh']",
-		thumbsUp: ".now-playing-actions [icon='sj:thumb-up-outline']",
-		thumbsDown: ".now-playing-actions [icon='sj:thumb-down-outline']"
-	};
-	// Track Information
-	const trackInformation = {
-		title: "#currently-playing-title",
-		artwork: "#playerBarArt", // Possibly adjust this so that we get a larger piece of art
-		artist: "#player-artist",
-		album: ".player-album",
-		duration: "#time_container_duration",
-		progress: "#time_container_current"
-	}
+	// Manages the google play music controls
+	var controls = new Control();
+	
 	// The track as of the last update cycle
 	var lastTrack;
+
 	//TODO: address the queue container
 	//queue: "#queueContainer"
 
@@ -71,51 +56,9 @@
 
 		var track = new Track(title, artist, album, art, progress, duration);
 		//todo - move this away from the track and into some other setting
-		// track.isPlaying = controls.isPlaying();
-		track.isPlaying = isTrackPlaying();
+		track.isPlaying = controls.isPlaying();
 		
 		return track;
-	}
-
-	/**
-	 * Helper function to determine the current play state
-	 */
-	function isTrackPlaying() {
-		var isPlaying = false;
-
-		var audioElements = document.getElementsByTagName("audio");
-		for( var i = 0; i < audioElements.length; i++ ) {
-			if( !audioElements[i].paused ) {
-				isPlaying = true;
-			}
-		}
-		
-		return isPlaying;
-	}
-
-	/**
-	 * Forward a click event to Google Play Music's play-pause button.
-	 */
-	function playPauseTrack(){
-		$(actions.play).click();
-	}
-
-	/**
-	 * Forward a click event to Google Play Music's next track (forward) button.
-	 */
-	function nextTrack(){
-		$(actions.forward).click();
-		// focus on the duration to force update it
-		$(trackInformation.duration).focus();
-	}
-
-	/**
-	 * Forward a click event to Google Play Music's rewind button.
-	 */
-	function rewindTrack(){
-		$(actions.rewind).click();
-		// focus on the duration to force update it
-		$(trackInformation.duration).focus();
 	}
 
 	// TODO: look into adding seek control, this would apply both here and on the controls html
@@ -134,9 +77,9 @@
 			console.log("message received: " + message.action);
 			switch( message.action ) {
 				case "update":			updateTrackData(true);			break;
-				case "play-pause":		playPauseTrack();				break;
-				case "next":			nextTrack();					break;
-				case "rewind":			rewindTrack();					break;
+				case "play-pause":		controls.play();				break;
+				case "next":			controls.next();				break;
+				case "rewind":			controls.rewind();				break;
 				default:
 					console.log(`unknown message received: ${message}`);
 			}
