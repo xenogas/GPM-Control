@@ -1,7 +1,6 @@
 'use strict';
 
 class Track {
-
     constructor(title, artist, album, artwork, progress, duration) {
         this.title = title;
         this.artist = artist;

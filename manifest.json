@@ -1,38 +1,31 @@
 {
     "manifest_version": 2,
-    "name": "Google Play Music",
+    "name": "Embed Test",
     "version": "1.0",
-
-    "description": "Adds a browser extension to allow Google Play Music to be controlled with media keys from any tab",
-    "homepage_url":"http://google.com",
-    "icons": {
-        "48": "icons/gpmusic-48.png",
-        "96": "icons/gpmusic-96.png"
-    },
 
     "content_scripts": [
         {
             "matches": ["*://play.google.com/*"],
-            "js": ["content_scripts/gpmusic.js"]
+            "js": [
+                "content.js"
+            ]
         }
     ],
 
     "background": {
-        "scripts": ["background_scripts/play-state.js"]
+        "scripts": [
+            "background.js"
+        ]
     },
 
     "permissions": [
-        "activeTab",
-        "tabs"
+        "webRequest",
+        "webRequestBlocking",
+        "<all_urls>"
     ],
 
-    "browser_action": {
-        "default_icon": "icons/gpmusic-32.png",
-        "default_title": "Control Google Play Music",
-        "default_popup": "popup/controls.html"
-    },
-
     "web_accessible_resources": [
-
+        "track.js",
+        "injected.js"
     ]
 }
