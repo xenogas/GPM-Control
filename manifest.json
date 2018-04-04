@@ -1,7 +1,14 @@
 {
     "manifest_version": 2,
-    "name": "Embed Test",
+    "name": "Google Play Music",
     "version": "1.0",
+
+    "description": "Allows Google Play Music to be controlled from any tab",
+    "homepage_url":"https://www.totumiter.com",
+    "icons": {
+        "48": "icons/gpmusic-48.png",
+        "96": "icons/gpmusic-96.png"
+    },
 
     "content_scripts": [
         {
@@ -24,6 +31,12 @@
         "webRequestBlocking",
         "<all_urls>"
     ],
+
+    "browser_action": {
+        "default_icon": "icons/gpmusic-32.png",
+        "default_title": "Control Google Play Music",
+        "default_popup": "popup/controls.html"
+    },
 
     "web_accessible_resources": [
         "track.js",

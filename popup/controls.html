@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<!-- <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">  -->
+	<link rel="stylesheet" href="controls.css" />
+</head>
+
+<body>
+	<div id="popup-content">
+		<div id="current-track-info">
+			<img id="current-artwork" src="../img/album-ph.png">
+			<span id="current-title">Title</span>
+			<div id="album-artist">
+				<span id="current-artist" class="secondary-information">Artist</span>
+				-
+				<span id="current-album" class="secondary-information">Album</span>
+			</div>
+			<span id="current-progress" class="secondary-information">x:xx / x:xx</span>
+		</div>
+	</div>
+
+	<!-- Icons provided courtesy of feathericons.com.  Licensed under the MIT License -->
+	<div id="media-control-bar">
+		<div class="control" id="rewind">
+			<svg viewBox="0 0 24 24">
+				<polygon points="19 20 9 12 19 4 19 20"></polygon>
+				<line x1="5" y1="19" x2="5" y2="5"></line>
+			</svg>
+		</div>
+		<div class="control circle" id="play">
+			<svg viewBox="0 0 24 24">
+				<polygon points="7 3 21 12 7 21 7 3"></polygon>
+			</svg>
+		</div>
+		<div class="control circle hidden" id="pause">
+			<svg viewBox="0 0 24 24">
+				<rect x="6" y="4" width="4" height="16"></rect>
+				<rect x="14" y="4" width="4" height="16"></rect>
+			</svg>
+		</div>
+		<div class="control" id="next">
+			<svg viewBox="0 0 24 24">
+				<polygon points="5 4 15 12 5 20 5 4"></polygon>
+				<line x1="19" y1="5" x2="19" y2="19"></line>
+			</svg>
+		</div>
+		<div class="control" id="progress-container">
+			<div id="primary-progress"></div>
+		</div>
+	</div>
+	</div>
+	<div id="error-content" class="hidden">
+		<p>Can't control Google Play Music from this webpage. Make sure that you are not in a privileged page such as about::debugging
+			or the addons.mozilla.org domain.</p>
+	</div>
+
+	<!-- referenced JS files -->
+	<!-- <script src="../message.js"></script> -->
+	<!-- <script src="../connection.js"></script> -->
+	<!-- <script src="../persistant-connection.js"></script> -->
+	<!-- <script src="popup-media.js"></script>
+		<script src="popup.js"></script> -->
+	<!-- <script src="controls.js"></script> -->
+</body>
+
+</html>
