@@ -22,18 +22,44 @@ class Popup {
     updateMiniPlayer() {
         var background = browser.extension.getBackgroundPage();
         var track = background.currentTrack;
+        // Update track info
         document.getElementById(Popup.TitleId).innerHTML = track.title;
 		document.getElementById(Popup.AlbumId).innerHTML = track.album;
 		document.getElementById(Popup.ArtistId).innerHTML = track.artist;
-		document.getElementById(Popup.ArtId).src = track.artwork;
-		var progress = `${track.progress} / ${track.duration}`;
-        document.getElementById(Popup.ProgressId).innerHTML = progress;
+        document.getElementById(Popup.ArtId).src = track.artwork;
+        
+        // Update Progress
+		this.updateProgress(track);
 
         var player = background.currentPlayer;
         this.setPlayPauseControl(player.isPlaying);
         
         // wait a second and then update again
         setTimeout(this.updateMiniPlayer.bind(this), 1000);
+    }
+
+    /**
+     * Update the progress indication including time and percentage bar.
+     * @param {Object} track contains all the information regarding the current track
+     */
+    updateProgress(track) {
+        // Split the progress and duration into parts
+        var p = track.progress.split(':');
+        p = parseInt(p[0]) * 60 + parseInt(p[1]);
+        var d = track.duration.split(':');
+        d = parseInt(d[0]) * 60 + parseInt(d[1]);
+
+        // Update progress percentage, make sure it doesn't exceed 100%
+        var progress = Math.min(p / d * 100, 100);
+        document.getElementById(Popup.ProgressBar).setAttribute('style', `width:${progress}%`);
+
+        // If the progress has exceeded the duration, we're at the end of the track.
+        // Match the progress to the durration to avoid odd display issues
+        if( p > d ) track.progress = track.duration;
+
+        // Update the progress / duration indicators
+        progress = `${track.progress} / ${track.duration}`;
+        document.getElementById(Popup.ProgressId).innerHTML = progress;
     }
 
     play() {
@@ -110,6 +136,7 @@ class Popup {
 	static get ArtistId() { return "current-artist"; }
 	static get AlbumId() { return "current-album"; }
     static get ProgressId() { return "current-progress"; }
+    static get ProgressBar() { return 'primary-progress'; }
     
     // References the popup HTML's DOM structure for media controls
     static get PlayId() { return "play"; }
