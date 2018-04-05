@@ -17,6 +17,8 @@ function updateTrack(details) {
 		currentTrack = extractTrackFromForm(data);
 		currentPlayer = extractPlayerFromForm(data);
 		// console.log(currentTrack);
+
+		return {cancel: true};
 	}
 }
 
