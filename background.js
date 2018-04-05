@@ -4,6 +4,8 @@ var updateTrackFilters = { urls: ['*://*.totumiter.com/*'] };
 var updateTrackOptions = ['blocking', 'requestBody'];
 // Track object containing the current track's information
 var currentTrack = {};
+// Current or last active GPM tab, -1 if none available
+var currentPlayer = -1;
 
 /**
  * Updates the current track reference with the details provided.
@@ -58,6 +60,7 @@ async function keepGPMAlive() {
 		await browser.tabs.update(tab.id, {active:true});
 		// set the current tab as active
 		await browser.tabs.update(activeTab[0].id, {active:true});
+		currentPlayer = tab.id;
 	}
 
 	setTimeout(keepGPMAlive, 1000);
