@@ -18,6 +18,8 @@
 		(document.head || document.documentElement).appendChild(s);
 	}
 
+	// Create a control to process action requests
+	var player = new MediaControl();
 
 	// Setup system to notify background script of track changes
 	injectScript('track.js');
