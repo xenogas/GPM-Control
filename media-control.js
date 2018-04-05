@@ -53,22 +53,6 @@ class MediaControl {
 		document.querySelector(Track.DurationId).focus();
 	}
 
-	/**
-	 * Helper function to determine the current play state
-	 */
-	get isPlaying() {
-		var isPlaying = false;
-
-		var audioElements = document.getElementsByTagName("audio");
-		for( var i = 0; i < audioElements.length; i++ ) {
-			if( !audioElements[i].paused ) {
-				isPlaying = true;
-			}
-		}
-		
-		return isPlaying;
-	}
-
 	// DOM IDs for the associated elements
 	static get PlayId() { return "#player-bar-play-pause"; }
 	static get PauseId() { return "#player-bar-play-pause"; }

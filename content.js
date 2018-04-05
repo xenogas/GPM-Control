@@ -23,5 +23,6 @@
 
 	// Setup system to notify background script of track changes
 	injectScript('track.js');
+	injectScript('media-player.js');
 	injectScript('injected.js');
 })();

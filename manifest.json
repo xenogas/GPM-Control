@@ -25,6 +25,7 @@
     "background": {
         "scripts": [
             "track.js",
+            "media-player.js",
             "background.js"
         ]
     },
@@ -44,6 +45,7 @@
 
     "web_accessible_resources": [
         "track.js",
+        "media-player.js",
         "injected.js"
     ]
 }
