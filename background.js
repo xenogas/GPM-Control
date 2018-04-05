@@ -5,17 +5,17 @@ var updateTrackOptions = ['blocking', 'requestBody'];
 // Track object containing the current track's information
 var currentTrack = {};
 // Current or last active GPM tab, -1 if none available
-var currentPlayer = -1;
+var currentPlayer = {id:-1, isPlaying:false};
 
 /**
  * Updates the current track reference with the details provided.
  * @param {String} details URL form encoded track information
  */
 function updateTrack(details) {
-	// console.log(`loading: ${details.url}`);
 	if (details.method == 'POST') {
 		var data = details.requestBody.formData;
 		currentTrack = extractTrackFromForm(data);
+		currentPlayer = extractPlayerFromForm(data);
 		// console.log(currentTrack);
 	}
 }
@@ -35,6 +35,18 @@ function extractTrackFromForm(form) {
 	);
 	track.creationTime = new Date(form.creationTime[0]);
 	return track;
+}
+
+/**
+ * Extracts and recreats the media player as defined by the data within the form.
+ * @param {String} form URL encoded form data containing MediaPlayer information
+ */
+function extractPlayerFromForm(form) {
+	var player = new MediaPlayer(
+		currentPlayer.id,
+		form.isPlaying[0]==='true'
+	);
+	return player;
 }
 
 // Listen for update notifications
@@ -60,7 +72,8 @@ async function keepGPMAlive() {
 		await browser.tabs.update(tab.id, {active:true});
 		// set the current tab as active
 		await browser.tabs.update(activeTab[0].id, {active:true});
-		currentPlayer = tab.id;
+		// todo - to address when accounting for multiple GPM tabs
+		currentPlayer.id = tab.id;
 	}
 
 	setTimeout(keepGPMAlive, 1000);

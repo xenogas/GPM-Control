@@ -16,8 +16,12 @@ class Popup {
         // document.getElementById(this.LuckyId).addEventListener("click", this.lucky);
     }
 
+    /**
+     * Update the popup mini-player's current track information and play state
+     */
     updateMiniPlayer() {
-        var track = browser.extension.getBackgroundPage().currentTrack;
+        var background = browser.extension.getBackgroundPage();
+        var track = background.currentTrack;
         document.getElementById(Popup.TitleId).innerHTML = track.title;
 		document.getElementById(Popup.AlbumId).innerHTML = track.album;
 		document.getElementById(Popup.ArtistId).innerHTML = track.artist;
@@ -25,7 +29,8 @@ class Popup {
 		var progress = `${track.progress} / ${track.duration}`;
         document.getElementById(Popup.ProgressId).innerHTML = progress;
 
-        this.setPlayPauseControl(true);
+        var player = background.currentPlayer;
+        this.setPlayPauseControl(player.isPlaying);
         
         // wait a second and then update again
         setTimeout(this.updateMiniPlayer.bind(this), 1000);
@@ -45,6 +50,12 @@ class Popup {
     forward() {
         this.sendAction(Message.Type.Forward);
     }
+
+    /**
+     * Toggles the display of the Play | Pause buttons to reflect the current
+     * available action.
+     * @param {Boolean} isPlaying true if media is currently playing
+     */
     setPlayPauseControl(isPlaying) {
         if( isPlaying ) {
             document.getElementById(Popup.PlayId).classList.add("hidden");
@@ -53,13 +64,20 @@ class Popup {
             document.getElementById(Popup.PauseId).classList.add("hidden");
             document.getElementById(Popup.PlayId).classList.remove("hidden");
         }
+        // Make sure the current player is updated immediately since the page won't
+        // update it until the next tick.
+        browser.extension.getBackgroundPage().currentPlayer.isPlaying = isPlaying;
     }
 
+    /**
+     * Send a message to the currently active GPM tab that the specified action has occured.
+     * @param {Message.Type} action type of action that has occured
+     */
     sendAction(action) {
-        console.log(`sending action: ${action}`);
+        // console.log(`sending action: ${action}`);
         var player = browser.extension.getBackgroundPage().currentPlayer;
-        if( player != -1 ) {
-            browser.tabs.sendMessage(player, {type: action});
+        if( player.id != -1 ) {
+            browser.tabs.sendMessage(player.id, {type: action});
         }
     }
 
