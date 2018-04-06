@@ -11,9 +11,9 @@ class Popup {
         document.getElementById(Popup.PauseId).addEventListener("click", this.pause.bind(this));
         document.getElementById(Popup.RewindId).addEventListener("click", this.rewind.bind(this));
         document.getElementById(Popup.NextId).addEventListener("click", this.forward.bind(this));
-        // document.getElementById(this.ThumbsUpId).addEventListener("click", this.thumbsUp);
-        // document.getElementById(this.ThumbsDownId).addEventListener("click", this.thumbsDown);
-        // document.getElementById(this.LuckyId).addEventListener("click", this.lucky);
+        document.getElementById(Popup.ThumbsUpId).addEventListener("click", this.thumbsUp.bind(this));
+        document.getElementById(Popup.ThumbsDownId).addEventListener("click", this.thumbsDown.bind(this));
+        document.getElementById(Popup.LuckyId).addEventListener("click", this.lucky.bind(this));
     }
 
     /**
@@ -29,7 +29,10 @@ class Popup {
         document.getElementById(Popup.ArtId).src = track.artwork;
         
         // Update Progress
-		this.updateProgress(track);
+        this.updateProgress(track);
+        
+        // Update Rating
+        this.setRating(track.thumbsUp, track.thumbsDown);
 
         var player = background.currentPlayer;
         this.setPlayPauseControl(player.isPlaying);
@@ -75,6 +78,34 @@ class Popup {
     }
     forward() {
         this.sendAction(Message.Type.Forward);
+    }
+    lucky() {
+        this.sendAction(Message.Type.Lucky);
+    }
+    thumbsUp() {
+        this.sendAction(Message.Type.RateUp);
+        var track = browser.extension.getBackgroundPage().currentTrack;
+        track.thumbsUp = !track.thumbsUp;
+        this.setRating(track.thumbsUp, track.thumbsDown);
+    }
+    thumbsDown() {
+        this.sendAction(Message.Type.RateDown);
+        var track = browser.extension.getBackgroundPage().currentTrack;
+        track.thumbsDown = !track.thumbsDown;
+        this.setRating(track.thumbsUp, track.thumbsDown);
+    }
+
+    setRating(isUp, isDown){
+        if( isUp ) {
+            document.getElementById(Popup.ThumbsUpId).classList.add("selected");
+        }else{
+            document.getElementById(Popup.ThumbsUpId).classList.remove("selected");
+        }
+        if( isDown ){
+            document.getElementById(Popup.ThumbsDownId).classList.add("selected");
+        }else{
+            document.getElementById(Popup.ThumbsDownId).classList.remove("selected");
+        }
     }
 
     /**
@@ -143,6 +174,9 @@ class Popup {
 	static get PauseId() { return "pause"; }
 	static get NextId() { return "next"; }
     static get RewindId() { return "rewind"; }
+    static get ThumbsUpId() { return "thumbs-up"; }
+    static get ThumbsDownId() { return "thumbs-down"; }
+    static get LuckyId() { return "lucky"; }
 }
 
 // Create a new popup

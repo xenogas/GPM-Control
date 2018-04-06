@@ -51,7 +51,12 @@ function getTrackInfo() {
 	var progress = document.querySelector(Track.ProgressId).innerHTML;
 	var duration = document.querySelector(Track.DurationId).innerHTML;
 
-	var track = new Track(title, artist, album, art, progress, duration);
+	var thumbsUp = document.querySelector(Track.ThumbsUpId);
+	thumbsUp = Track.isRatingSelected(thumbsUp);
+	var thumbsDown = document.querySelector(Track.ThumbsDownId);
+	thumbsDown = Track.isRatingSelected(thumbsDown);
+
+	var track = new Track(title, artist, album, art, progress, duration, thumbsUp, thumbsDown);
 	
 	return track;
 }

@@ -22,7 +22,7 @@ class Message {
 			Forward:			"forward",
 			RateUp:				"rate-up",
 			RateDown:			"rate-down",
-			ImFeelingLucky:		"i'm feeling lucky",
+			Lucky:				"i'm feeling lucky",
 			Test:				"test message",
 			TestToContent:		"test-to-content message"
 		});

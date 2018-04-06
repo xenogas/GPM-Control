@@ -1,13 +1,15 @@
 'use strict';
 
 class Track {
-    constructor(title, artist, album, artwork, progress, duration) {
+    constructor(title, artist, album, artwork, progress, duration, thumbsUp, thumbsDown) {
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.artwork = artwork;
         this.progress = progress;
         this.duration = duration;
+        this.thumbsUp = thumbsUp;
+        this.thumbsDown = thumbsDown;
 
         // Set creation and update time to now
         var date = new Date();
@@ -38,4 +40,9 @@ class Track {
     static get AlbumId() { return ".player-album"; }
     static get DurationId() { return "#time_container_duration"; }
     static get ProgressId() { return "#time_container_current"; }
+	static get ThumbsUpId() { return ".now-playing-actions [icon='sj:thumb-up-outline']"; }
+	static get ThumbsDownId() { return ".now-playing-actions [icon='sj:thumb-down-outline']"; }
+    static isRatingSelected(rating) {
+        return rating.title.toLowerCase().indexOf('undo') > -1;
+    }
 }

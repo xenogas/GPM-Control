@@ -18,6 +18,9 @@ class MediaControl {
 			case Message.Type.Pause:		this.pause();				break;
 			case Message.Type.Forward:		this.next();				break;
 			case Message.Type.Rewind:		this.rewind();				break;
+			case Message.Type.Lucky:		this.lucky();				break;
+			case Message.Type.RateUp:		this.thumbsUp();			break;
+			case Message.Type.RateDown:		this.thumbsDown();			break;
 		}
 	}
 
@@ -51,6 +54,18 @@ class MediaControl {
 		document.querySelector(MediaControl.RewindId).click();
 		// focus on the duration to force update it
 		document.querySelector(Track.DurationId).focus();
+	}
+
+	lucky() {
+		document.querySelector(MediaControl.LuckyId).click();
+	}
+
+	thumbsUp() {
+		document.querySelector(MediaControl.ThumbsUpId).click();
+	}
+
+	thumbsDown() {
+		document.querySelector(MediaControl.ThumbsDownId).click();
 	}
 
 	// DOM IDs for the associated elements

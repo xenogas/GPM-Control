@@ -33,7 +33,9 @@ function extractTrackFromForm(form) {
 		form.album[0],
 		form.artwork[0],
 		form.progress[0],
-		form.duration[0]
+		form.duration[0],
+		form.thumbsUp[0]==='true',
+		form.thumbsDown[0]==='true'
 	);
 	track.creationTime = new Date(form.creationTime[0]);
 	return track;
