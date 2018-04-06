@@ -1,108 +1,190 @@
 @font-face {
-    font-family: "Roboto-Light";
-    src: url("/Roboto-Light.ttf") format("woff2");
+	font-family: "Roboto-Light";
+	src: url("/Roboto-Light.ttf") format("woff2");
 }
 .hidden {
-    display: none!important;
+	display: none!important;
 }
 body{
-    width: 400px;
-    height: 74px;
+	width: 400px;
+	height: 74px;
 }
 /** control bar **/
 svg {
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    width: 16;
-    height: 16px;
+	stroke: currentColor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	width: 16px;
+	height: 16px;
+}
+.circle {
+	border-radius: 50%;
+}
+.control {
+	cursor: pointer;
 }
 #media-control-bar {
-    display: flex;
-    flex-direction: row;
-    position: absolute;
-    bottom: 3px;
-    left: 95px;
+	display: flex;
+	flex-direction: row;
+	position: absolute;
+	bottom: 3px;
+	left: 95px;
 }
 #media-control-bar .control {
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
-    #media-control-bar .control.circle {
-        border-radius: 50%;
-    }
-    #play {
-        color: white;
-        fill: white;
-        background-color: rgb(255, 87, 34);
-    }
-    #pause {
-        color: white;
-        fill: white;
-        background-color: rgb(255, 87, 34);
-    }
+	#play {
+		color: white;
+		fill: white;
+		background-color: rgb(255, 87, 34);
+	}
+	#pause {
+		color: white;
+		fill: white;
+		background-color: rgb(255, 87, 34);
+	}
 #progress-container {
-    position: relative;
-    background-color: transparent;
-    height: 4px;
-    width: 180px!important;
+	position: relative;
+	background-color: transparent;
+	height: 4px;
+	width: 170px!important;
+	top: 10px;
 }
 #progress-track {
-    position: absolute;
-    background-color: rgb(230, 230, 230);
-    width: 100%!important;
-    height: 4px;
+	position: absolute;
+	background-color: rgb(230, 230, 230);
+	width: 100%!important;
+	height: 4px;
 }
 #primary-progress {
-    position: absolute;
-    background-color: rgb(255, 87, 34);
-    width: 5%;
-    height: 4px;
-    left: 0;
-    z-index: 1;
+	position: absolute;
+	background-color: rgb(255, 87, 34);
+	width: 5%;
+	height: 4px;
+	left: 0;
+	z-index: 1;
 }
 /** Current track information **/
 #current-track-info {
-    overflow: hidden;
+	overflow: hidden;
 }
 #current-track-info span {
-    font-family: 'Roboto-Light', sans-serif;
-    font-weight: 100;
+	font-family: 'Roboto-Light', sans-serif;
+	font-weight: 100;
 }
 #current-track-info .secondary-information {
-    font-size: 12px;
+	font-size: 12px;
 }
 #current-artwork {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 90px;
-    height: 90px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 90px;
+	height: 90px;
 }
 #current-title {
-    position: absolute;
-    top: 5px;
-    left: 95px;
-    font-size: 16px;
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 310px;
+	position: absolute;
+	top: 5px;
+	left: 95px;
+	font-size: 16px;
+	overflow: hidden;
+	white-space: nowrap;
+	max-width: 310px;
 }
 #album-artist {
-    position: absolute;
-    top: 28px;
-    left: 95px;
-    overflow: hidden;
-    white-space: nowrap;
-    max-width: 310px;
+	position: absolute;
+	top: 28px;
+	left: 95px;
+	overflow: hidden;
+	white-space: nowrap;
+	max-width: 310px;
 }
 #current-progress {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
+	position: absolute;
+	bottom: 8px;
+	right: 8px;
+}
+/** Rating **/
+#rating {
+	position: absolute;
+	bottom: 16px;
+	right: 2px;
+	width: 40px;
+	height: 30px;
+	z-index: 1;
+	opacity: 0;
+	transition: all .3s ease;
+	padding: 5px;
+}
+#rating:hover {
+	opacity: 1;
+}
+#thumbs-up, #thumbs-down {
+	position: absolute;
+	color: black;
+	fill: white;
+	width: 24px;
+	height: 24px;
+}
+#thumbs-up {
+	right: 30px;
+	bottom: 4px;
+}
+#thumbs-down {
+	right: 2px;
+	bottom: 0px;
+}
+#thumbs-up.selected, #thumbs-down.selected {
+	fill: rgb(97, 97, 97);
+	color: rgb(97, 97, 97);
+}
+#thumbs-up:active svg, #thumbs-down:active svg {
+	width: 18px;
+	height: 18px;
+}
+/** I'm Feeling Lucky **/
+#lucky-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 90px;
+	height: 90px;
+}
+#lucky {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	z-index: 1;
+	color: transparent;
+	fill: white;
+	background: rgb(255, 87, 34);
+	width: 50px;
+	height: 50px;
+	opacity: 0;
+	transition: all .3s ease;
+}
+#lucky-container:hover #lucky {
+	opacity: 1;
+}
+#lucky svg {
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	transition: all .3s ease;
+}
+#lucky:hover svg { 
+	width: 32px;
+	height: 32px;
+}
+#lucky:active svg {
+	width: 34px;
+	height: 34px;
 }

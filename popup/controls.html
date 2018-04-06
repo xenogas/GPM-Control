@@ -20,6 +20,27 @@
 			</div>
 			<span id="current-progress" class="secondary-information">x:xx / x:xx</span>
 		</div>
+		<div id="lucky-container">
+			<div class="control circle" id="lucky">
+				<svg viewBox="0 0 24 24">
+					<g class="style-scope iron-icon">
+						<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM8 9.5c-.83 0-1.5-.67-1.5-1.5S7.17 6.5 8 6.5s1.5.67 1.5 1.5S8.83 9.5 8 9.5zm4 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" class="style-scope iron-icon"></path>
+					</g>
+				</svg>
+			</div>
+		</div>
+		<div id="rating">
+			<div class="control" id="thumbs-up">
+				<svg viewBox="0 0 24 24">
+					<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+				</svg>
+			</div>
+			<div class="control selected" id="thumbs-down">
+				<svg viewBox="0 0 24 24">
+					<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path>
+				</svg>
+			</div>
+		</div>
 	</div>
 
 	<!-- Icons provided courtesy of feathericons.com.  Licensed under the MIT License -->
@@ -47,14 +68,14 @@
 				<line x1="19" y1="5" x2="19" y2="19"></line>
 			</svg>
 		</div>
-		<div class="control" id="progress-container">
+		<div id="progress-container">
 			<div id="progress-track"></div>
 			<div id="primary-progress"></div>
 		</div>
 	</div>
-	</div>
 	<div id="error-content" class="hidden">
-		<p>Can't control Google Play Music from this webpage. Make sure that you are not in a privileged page such as about::debugging or the addons.mozilla.org domain.</p>
+		<p>Can't control Google Play Music from this webpage. Make sure that you are not in a privileged page such as about::debugging
+			or the addons.mozilla.org domain.</p>
 	</div>
 
 	<!-- referenced JS files -->
